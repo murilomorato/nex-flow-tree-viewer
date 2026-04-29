@@ -4,6 +4,8 @@ import { NodeType, NodeStatus, TreeNode } from '../../types/tree';
 import { NODE_CONFIG, NODE_TYPES, STATUS_CONFIG, NODE_STATUSES } from '../../utils/nodeConfig';
 import { generateId } from '../../utils/id';
 
+const MAX_DESC = 1000;
+
 interface AddProps {
   mode: 'add';
   parentId: string | null;
@@ -14,7 +16,7 @@ interface AddProps {
 interface EditProps {
   mode: 'edit';
   node: TreeNode;
-  onSubmit: (id: string, label: string, nodeType: NodeType, status?: NodeStatus) => void;
+  onSubmit: (id: string, label: string, nodeType: NodeType, status?: NodeStatus, description?: string) => void;
   onClose: () => void;
 }
 
@@ -28,6 +30,7 @@ export function NodeFormModal(props: Props) {
   const [status, setStatus] = useState<NodeStatus | ''>(
     isEdit ? (props.node.status ?? '') : ''
   );
+  const [description, setDescription] = useState(isEdit ? (props.node.description ?? '') : '');
 
   const config = NODE_CONFIG[nodeType];
 
@@ -36,15 +39,17 @@ export function NodeFormModal(props: Props) {
     if (!label.trim()) return;
 
     const resolvedStatus = config.hasStatus && status ? (status as NodeStatus) : undefined;
+    const resolvedDescription = description.trim() || undefined;
 
     if (isEdit) {
-      props.onSubmit(props.node.id, label.trim(), nodeType, resolvedStatus);
+      props.onSubmit(props.node.id, label.trim(), nodeType, resolvedStatus, resolvedDescription);
     } else {
       const newNode: TreeNode = {
         id: generateId(),
         label: label.trim(),
         type: nodeType,
         status: resolvedStatus,
+        description: resolvedDescription,
         children: [],
         collapsed: false,
       };
@@ -104,6 +109,24 @@ export function NodeFormModal(props: Props) {
             </select>
           </div>
         )}
+
+        <div className="form-group">
+          <label htmlFor="node-desc">
+            Descrição
+            <span className="desc-char-count" style={{ color: description.length >= MAX_DESC ? 'var(--danger)' : undefined }}>
+              {description.length} / {MAX_DESC}
+            </span>
+          </label>
+          <textarea
+            id="node-desc"
+            className="desc-textarea"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            placeholder="Descrição opcional. Suporta markdown."
+            maxLength={MAX_DESC}
+            rows={4}
+          />
+        </div>
 
         <div className="form-actions">
           <button type="button" onClick={props.onClose} className="btn btn-secondary">

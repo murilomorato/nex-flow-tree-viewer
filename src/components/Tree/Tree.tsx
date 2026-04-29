@@ -13,8 +13,8 @@ export function Tree() {
     dispatch({ type: 'ADD_NODE', parentId, node });
   }
 
-  function handleEdit(id: string, label: string, nodeType: NodeType, status?: NodeStatus) {
-    dispatch({ type: 'EDIT_NODE', id, label, nodeType, status });
+  function handleEdit(id: string, label: string, nodeType: NodeType, status?: NodeStatus, description?: string) {
+    dispatch({ type: 'EDIT_NODE', id, label, nodeType, status, description });
   }
 
   function handleDelete(id: string) {
@@ -80,6 +80,7 @@ export function Tree() {
             key={project.id}
             node={project}
             depth={0}
+            ancestors={[]}
             onAddChild={handleAddChild}
             onEdit={handleEdit}
             onDelete={handleDelete}

@@ -20,6 +20,7 @@ export interface TreeNode {
   label: string;
   type: NodeType;
   status?: NodeStatus;
+  description?: string;
   children: TreeNode[];
   collapsed: boolean;
 }

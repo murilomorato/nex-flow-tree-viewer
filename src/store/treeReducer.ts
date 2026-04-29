@@ -6,7 +6,7 @@ export interface State {
 
 export type Action =
   | { type: 'ADD_NODE'; parentId: string | null; node: TreeNode }
-  | { type: 'EDIT_NODE'; id: string; label: string; nodeType: NodeType; status?: NodeStatus }
+  | { type: 'EDIT_NODE'; id: string; label: string; nodeType: NodeType; status?: NodeStatus; description?: string }
   | { type: 'DELETE_NODE'; id: string }
   | { type: 'MOVE_NODE'; nodeId: string; newParentId: string }
   | { type: 'TOGGLE_COLLAPSE'; id: string }
@@ -64,6 +64,7 @@ export function treeReducer(state: State, action: Action): State {
           label: action.label,
           type: action.nodeType,
           status: action.status,
+          description: action.description,
         })),
       };
 

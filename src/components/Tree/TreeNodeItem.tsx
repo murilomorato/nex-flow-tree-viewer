@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { TreeNode, NodeType, NodeStatus } from '../../types/tree';
 import { NODE_CONFIG, STATUS_CONFIG } from '../../utils/nodeConfig';
 import { NodeFormModal } from '../Modal/NodeFormModal';
+import { DescriptionPanel, AncestorInfo } from '../DescriptionPanel/DescriptionPanel';
 
 interface Props {
   node: TreeNode;
   depth: number;
+  ancestors: AncestorInfo[];
   onAddChild: (parentId: string | null, node: TreeNode) => void;
-  onEdit: (id: string, label: string, nodeType: NodeType, status?: NodeStatus) => void;
+  onEdit: (id: string, label: string, nodeType: NodeType, status?: NodeStatus, description?: string) => void;
   onDelete: (id: string) => void;
   onToggleCollapse: (id: string) => void;
   onDragStart: (id: string) => void;
@@ -15,15 +17,19 @@ interface Props {
   onDragEnd: () => void;
 }
 
-export function TreeNodeItem({ node, depth, onAddChild, onEdit, onDelete, onToggleCollapse, onDragStart, onDrop, onDragEnd }: Props) {
+export function TreeNodeItem({ node, depth, ancestors, onAddChild, onEdit, onDelete, onToggleCollapse, onDragStart, onDrop, onDragEnd }: Props) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showDescPanel, setShowDescPanel] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
 
   const config = NODE_CONFIG[node.type];
   const hasChildren = node.children.length > 0;
+  const hasDescription = Boolean(node.description);
+
+  const childAncestors: AncestorInfo[] = [...ancestors, { label: node.label, type: node.type }];
 
   return (
     <div className="tree-node">
@@ -78,6 +84,16 @@ export function TreeNodeItem({ node, depth, onAddChild, onEdit, onDelete, onTogg
           {node.status && (
             <span className="node-status">{STATUS_CONFIG[node.status].icon}</span>
           )}
+          {hasDescription && (
+            <button
+              className="desc-icon-btn"
+              onClick={() => setShowDescPanel(true)}
+              title="Ver descrição"
+              aria-label="Ver descrição"
+            >
+              💬
+            </button>
+          )}
         </span>
 
         <div className="node-actions">
@@ -130,6 +146,7 @@ export function TreeNodeItem({ node, depth, onAddChild, onEdit, onDelete, onTogg
               key={child.id}
               node={child}
               depth={depth + 1}
+              ancestors={childAncestors}
               onAddChild={onAddChild}
               onEdit={onEdit}
               onDelete={onDelete}
@@ -157,6 +174,14 @@ export function TreeNodeItem({ node, depth, onAddChild, onEdit, onDelete, onTogg
           node={node}
           onSubmit={onEdit}
           onClose={() => setShowEditModal(false)}
+        />
+      )}
+
+      {showDescPanel && (
+        <DescriptionPanel
+          node={node}
+          ancestors={ancestors}
+          onClose={() => setShowDescPanel(false)}
         />
       )}
     </div>
