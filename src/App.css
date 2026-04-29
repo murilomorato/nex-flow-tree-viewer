@@ -189,6 +189,39 @@
   position: relative;
 }
 
+/* Guide lines: children container creates the vertical line */
+.tree-children {
+  position: relative;
+  margin-left: 26px;
+  padding-left: 18px;
+}
+
+.tree-children::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 14px;
+  width: 1.5px;
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+
+/* Horizontal connector per direct child */
+.tree-children > .tree-node {
+  position: relative;
+}
+
+.tree-children > .tree-node::before {
+  content: '';
+  position: absolute;
+  left: -18px;
+  top: 15px;
+  width: 18px;
+  height: 1.5px;
+  background: #cbd5e1;
+}
+
 .tree-node-row {
   display: flex;
   align-items: center;

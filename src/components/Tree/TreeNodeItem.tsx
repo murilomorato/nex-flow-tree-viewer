@@ -26,7 +26,7 @@ export function TreeNodeItem({ node, depth, onAddChild, onEdit, onDelete, onTogg
   const hasChildren = node.children.length > 0;
 
   return (
-    <div className="tree-node" style={{ paddingLeft: depth > 0 ? `${depth * 22}px` : 0 }}>
+    <div className="tree-node">
       <div
         className={`tree-node-row${isDragging ? ' dragging' : ''}${isDragOver ? ' drag-over' : ''}`}
         draggable
@@ -106,7 +106,7 @@ export function TreeNodeItem({ node, depth, onAddChild, onEdit, onDelete, onTogg
       </div>
 
       {showDeleteConfirm && (
-        <div className="delete-confirm" style={{ paddingLeft: `${(depth + 1) * 22 + 26}px` }}>
+        <div className="delete-confirm" style={{ paddingLeft: '44px' }}>
           <span>Deletar &ldquo;{node.label}&rdquo;{hasChildren ? ' e todos os filhos' : ''}?</span>
           <button
             className="btn btn-danger btn-sm"
@@ -123,20 +123,24 @@ export function TreeNodeItem({ node, depth, onAddChild, onEdit, onDelete, onTogg
         </div>
       )}
 
-      {!node.collapsed && node.children.map(child => (
-        <TreeNodeItem
-          key={child.id}
-          node={child}
-          depth={depth + 1}
-          onAddChild={onAddChild}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          onToggleCollapse={onToggleCollapse}
-          onDragStart={onDragStart}
-          onDrop={onDrop}
-          onDragEnd={onDragEnd}
-        />
-      ))}
+      {!node.collapsed && node.children.length > 0 && (
+        <div className="tree-children">
+          {node.children.map(child => (
+            <TreeNodeItem
+              key={child.id}
+              node={child}
+              depth={depth + 1}
+              onAddChild={onAddChild}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onToggleCollapse={onToggleCollapse}
+              onDragStart={onDragStart}
+              onDrop={onDrop}
+              onDragEnd={onDragEnd}
+            />
+          ))}
+        </div>
+      )}
 
       {showAddModal && (
         <NodeFormModal
