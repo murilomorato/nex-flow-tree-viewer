@@ -1,0 +1,89 @@
+
+Projeto: Aletheia 2.0
+│
+└── Épico: Relatórios na Web
+    │
+    ├── Agrupamento: Arquitetura de relatórios
+    │   │
+    │   ├── ⚙️ Statistics Server
+    │   │   │
+    │   │   ├── ✨ Criar base de consultas agregadas
+    │   │   │   ├── 🧠 Estratégia de agregação ✅
+    │   │   │   ├── 🧠 Granularidade dos dados 🟨
+    │   │   │   ├── 🧱 API de métricas 🔽
+    │   │   │   └── 🧱 Jobs de pré-agregação 🔽
+    │   │   │
+    │   │   └── ✨ Aumentar confiabilidade dos dados exibidos
+    │   │       ├── 🧠 Regras de reconciliação 🔺
+    │   │       ├── 🧱 Alertas de divergência ⚪
+    │   │       └── 🧱 Logs de processamento ✅
+    │   │
+    │   └── ⚙️ Pipeline de dados
+    │       │
+    │       └── ✨ Criar rotina diária de atualização dos dados
+    │           ├── 🧠 Orquestração dos jobs 🔺
+    │           ├── 🧱 Ingestão de eventos 🔽
+    │           └── 🧱 Transformações ETL 🔽
+    │
+    ├── Agrupamento: Experiência de uso
+    │   │
+    │   ├── 🌍 Relatório de Vendas
+    │   │   │
+    │   │   └── ✨ Criar visão de vendas por produto
+    │   │       ├── 🧠 Definição de métricas 🔺
+    │   │       ├── 🧠 Estrutura da informação 🟨
+    │   │       ├── 🧱 Front do relatório 🔽
+    │   │       └── 🧱 Filtros e interações 🔽
+    │   │
+    │   └── 🌍 Relatório de Faturamento
+    │       │
+    │       └── ✨ Criar análise de faturamento por período
+    │           ├── 🧠 Regras de negócio ✅
+    │           ├── 🧱 Front do relatório 🔽
+    │           └── 🧱 Comparação por período ⚪
+    │
+    └── Agrupamento: Consistência de dados
+        │
+        └── ⚙️ Validação de métricas
+            │
+            └── ✨ Aumentar confiança nos números apresentados
+                ├── 🧠 Regras de reconciliação 🔺
+                ├── 🧱 Testes automatizados de dados 🔽
+                └── 🧱 Evidência visual de divergência ⚪
+
+🌍 Componente Feature
+⚙️ Componente Estrutural ou Feature interna
+✨ Mudança de valor
+🧠 Desafio estrutural
+🧱 Artefato
+
+⚪ Mapeado
+🔺 Subida
+🟨 Topo
+🔽 Descida
+✅ Concluído
+
+Explicação dos elementos
+🌍 Componente Feature
+Parte do produto que entrega valor percebido diretamente pelo cliente ou usuário final.
+⚙️ Componente Estrutura
+Parte do produto que entrega capacidade interna, sustentando ou viabilizando features.
+✨ Mudança de valor
+Resultado pretendido dentro de um componente. Pode ser criar aquele componente pela primeira vez ou explica qual mudança/evolução queremos gerar. 
+🧠 Desafio estrutural
+Incerteza relevante que precisa ser resolvida para a solução existir corretamente.
+🧱 Artefato
+Peça concreta produzida pelo trabalho para materializar a solução.
+
+Explicação dos estados
+⚪ Mapeado
+Existe no mapa, mas ainda não está sendo tratado ativamente.
+🔺 Subida
+Está sendo trabalhado, mas ainda falta convicção.
+🟨 Topo
+Existe convicção suficiente para orientar construção.
+🔽 Descida
+A convicção está sendo materializada em construção.
+✅ Concluído
+Foi resolvido, entregue ou estabilizado.
+

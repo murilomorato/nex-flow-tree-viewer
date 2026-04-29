@@ -1,0 +1,121 @@
+import { useState } from 'react';
+import { TreeNode, NodeType, NodeStatus } from '../../types/tree';
+import { NODE_CONFIG, STATUS_CONFIG } from '../../utils/nodeConfig';
+import { NodeFormModal } from '../Modal/NodeFormModal';
+
+interface Props {
+  node: TreeNode;
+  depth: number;
+  onAddChild: (parentId: string | null, node: TreeNode) => void;
+  onEdit: (id: string, label: string, nodeType: NodeType, status?: NodeStatus) => void;
+  onDelete: (id: string) => void;
+  onToggleCollapse: (id: string) => void;
+}
+
+export function TreeNodeItem({ node, depth, onAddChild, onEdit, onDelete, onToggleCollapse }: Props) {
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const config = NODE_CONFIG[node.type];
+  const hasChildren = node.children.length > 0;
+
+  return (
+    <div className="tree-node" style={{ paddingLeft: depth > 0 ? `${depth * 22}px` : 0 }}>
+      <div className="tree-node-row">
+        <button
+          className={`collapse-btn${!hasChildren ? ' invisible' : ''}`}
+          onClick={() => hasChildren && onToggleCollapse(node.id)}
+          aria-label={node.collapsed ? 'Expandir' : 'Colapsar'}
+          tabIndex={hasChildren ? 0 : -1}
+        >
+          {hasChildren ? (node.collapsed ? '▶' : '▼') : null}
+        </button>
+
+        <span
+          className="node-label"
+          style={{ color: config.color, fontWeight: config.fontWeight ?? 400 }}
+        >
+          {config.icon && <span className="node-icon">{config.icon}</span>}
+          {config.prefix && <span className="node-prefix">{config.prefix}: </span>}
+          {node.label}
+          {node.status && (
+            <span className="node-status">{STATUS_CONFIG[node.status].icon}</span>
+          )}
+        </span>
+
+        <div className="node-actions">
+          <button
+            className="action-btn"
+            onClick={() => setShowAddModal(true)}
+            title="Adicionar filho"
+          >
+            +
+          </button>
+          <button
+            className="action-btn"
+            onClick={() => setShowEditModal(true)}
+            title="Editar"
+          >
+            ✏️
+          </button>
+          <button
+            className="action-btn action-btn-delete"
+            onClick={() => setShowDeleteConfirm(true)}
+            title="Deletar"
+          >
+            🗑
+          </button>
+        </div>
+      </div>
+
+      {showDeleteConfirm && (
+        <div className="delete-confirm" style={{ paddingLeft: `${(depth + 1) * 22 + 26}px` }}>
+          <span>Deletar &ldquo;{node.label}&rdquo;{hasChildren ? ' e todos os filhos' : ''}?</span>
+          <button
+            className="btn btn-danger btn-sm"
+            onClick={() => { onDelete(node.id); setShowDeleteConfirm(false); }}
+          >
+            Confirmar
+          </button>
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={() => setShowDeleteConfirm(false)}
+          >
+            Cancelar
+          </button>
+        </div>
+      )}
+
+      {!node.collapsed && node.children.map(child => (
+        <TreeNodeItem
+          key={child.id}
+          node={child}
+          depth={depth + 1}
+          onAddChild={onAddChild}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onToggleCollapse={onToggleCollapse}
+        />
+      ))}
+
+      {showAddModal && (
+        <NodeFormModal
+          mode="add"
+          parentId={node.id}
+          onSubmit={onAddChild}
+          onClose={() => setShowAddModal(false)}
+        />
+      )}
+
+      {showEditModal && (
+        <NodeFormModal
+          mode="edit"
+          node={node}
+          onSubmit={onEdit}
+          onClose={() => setShowEditModal(false)}
+        />
+      )}
+    </div>
+  );
+}
