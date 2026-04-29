@@ -12,7 +12,10 @@ export function exportToJson(projects: TreeNode[]): void {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `nex-flow-${new Date().toISOString().slice(0, 10)}.json`;
+  const now = new Date();
+  const date = now.toISOString().slice(0, 10);
+  const time = now.toTimeString().slice(0, 8).replace(/:/g, '-');
+  link.download = `nex-flow-${date}_${time}.json`;
   link.click();
   URL.revokeObjectURL(url);
 }
