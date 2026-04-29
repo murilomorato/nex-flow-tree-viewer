@@ -10,19 +10,55 @@ interface Props {
   onEdit: (id: string, label: string, nodeType: NodeType, status?: NodeStatus) => void;
   onDelete: (id: string) => void;
   onToggleCollapse: (id: string) => void;
+  onDragStart: (id: string) => void;
+  onDrop: (targetId: string) => void;
+  onDragEnd: () => void;
 }
 
-export function TreeNodeItem({ node, depth, onAddChild, onEdit, onDelete, onToggleCollapse }: Props) {
+export function TreeNodeItem({ node, depth, onAddChild, onEdit, onDelete, onToggleCollapse, onDragStart, onDrop, onDragEnd }: Props) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const config = NODE_CONFIG[node.type];
   const hasChildren = node.children.length > 0;
 
   return (
     <div className="tree-node" style={{ paddingLeft: depth > 0 ? `${depth * 22}px` : 0 }}>
-      <div className="tree-node-row">
+      <div
+        className={`tree-node-row${isDragging ? ' dragging' : ''}${isDragOver ? ' drag-over' : ''}`}
+        draggable
+        onDragStart={(e) => {
+          e.stopPropagation();
+          setIsDragging(true);
+          onDragStart(node.id);
+        }}
+        onDragEnd={() => {
+          setIsDragging(false);
+          setIsDragOver(false);
+          onDragEnd();
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDragOver(true);
+        }}
+        onDragLeave={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+            setIsDragOver(false);
+          }
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDragOver(false);
+          onDrop(node.id);
+        }}
+      >
+        <span className="drag-handle" title="Arrastar para mover">⠿</span>
+
         <button
           className={`collapse-btn${!hasChildren ? ' invisible' : ''}`}
           onClick={() => hasChildren && onToggleCollapse(node.id)}
@@ -96,6 +132,9 @@ export function TreeNodeItem({ node, depth, onAddChild, onEdit, onDelete, onTogg
           onEdit={onEdit}
           onDelete={onDelete}
           onToggleCollapse={onToggleCollapse}
+          onDragStart={onDragStart}
+          onDrop={onDrop}
+          onDragEnd={onDragEnd}
         />
       ))}
 

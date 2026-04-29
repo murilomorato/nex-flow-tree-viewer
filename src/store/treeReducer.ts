@@ -8,6 +8,7 @@ export type Action =
   | { type: 'ADD_NODE'; parentId: string | null; node: TreeNode }
   | { type: 'EDIT_NODE'; id: string; label: string; nodeType: NodeType; status?: NodeStatus }
   | { type: 'DELETE_NODE'; id: string }
+  | { type: 'MOVE_NODE'; nodeId: string; newParentId: string }
   | { type: 'TOGGLE_COLLAPSE'; id: string }
   | { type: 'COLLAPSE_ALL' }
   | { type: 'EXPAND_ALL' }
@@ -23,6 +24,19 @@ function filterNodes(nodes: TreeNode[], id: string): TreeNode[] {
   return nodes
     .filter(n => n.id !== id)
     .map(n => ({ ...n, children: filterNodes(n.children, id) }));
+}
+
+function findNode(nodes: TreeNode[], id: string): TreeNode | null {
+  for (const n of nodes) {
+    if (n.id === id) return n;
+    const found = findNode(n.children, id);
+    if (found) return found;
+  }
+  return null;
+}
+
+function isDescendant(node: TreeNode, targetId: string): boolean {
+  return node.children.some(c => c.id === targetId || isDescendant(c, targetId));
 }
 
 function setCollapsed(nodes: TreeNode[], collapsed: boolean): TreeNode[] {
@@ -55,6 +69,21 @@ export function treeReducer(state: State, action: Action): State {
 
     case 'DELETE_NODE':
       return { projects: filterNodes(state.projects, action.id) };
+
+    case 'MOVE_NODE': {
+      if (action.nodeId === action.newParentId) return state;
+      const nodeToMove = findNode(state.projects, action.nodeId);
+      if (!nodeToMove) return state;
+      if (isDescendant(nodeToMove, action.newParentId)) return state;
+      const withoutNode = filterNodes(state.projects, action.nodeId);
+      return {
+        projects: mapNodes(withoutNode, action.newParentId, n => ({
+          ...n,
+          collapsed: false,
+          children: [...n.children, nodeToMove],
+        })),
+      };
+    }
 
     case 'TOGGLE_COLLAPSE':
       return {

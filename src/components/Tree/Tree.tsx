@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTreeContext } from '../../store/TreeContext';
 import { TreeNode, NodeType, NodeStatus } from '../../types/tree';
 import { TreeNodeItem } from './TreeNodeItem';
@@ -7,6 +7,7 @@ import { NodeFormModal } from '../Modal/NodeFormModal';
 export function Tree() {
   const { state, dispatch } = useTreeContext();
   const [showAddProject, setShowAddProject] = useState(false);
+  const draggingId = useRef<string | null>(null);
 
   function handleAddChild(parentId: string | null, node: TreeNode) {
     dispatch({ type: 'ADD_NODE', parentId, node });
@@ -22,6 +23,21 @@ export function Tree() {
 
   function handleToggle(id: string) {
     dispatch({ type: 'TOGGLE_COLLAPSE', id });
+  }
+
+  function handleDragStart(id: string) {
+    draggingId.current = id;
+  }
+
+  function handleDrop(targetId: string) {
+    if (draggingId.current && draggingId.current !== targetId) {
+      dispatch({ type: 'MOVE_NODE', nodeId: draggingId.current, newParentId: targetId });
+    }
+    draggingId.current = null;
+  }
+
+  function handleDragEnd() {
+    draggingId.current = null;
   }
 
   if (state.projects.length === 0) {
@@ -68,6 +84,9 @@ export function Tree() {
             onEdit={handleEdit}
             onDelete={handleDelete}
             onToggleCollapse={handleToggle}
+            onDragStart={handleDragStart}
+            onDrop={handleDrop}
+            onDragEnd={handleDragEnd}
           />
         ))}
       </div>

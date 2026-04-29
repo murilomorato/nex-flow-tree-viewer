@@ -289,6 +289,35 @@
   color: var(--danger);
 }
 
+/* Drag and drop */
+.drag-handle {
+  width: 14px;
+  min-width: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  font-size: 13px;
+  cursor: grab;
+  transition: color 0.1s;
+  user-select: none;
+}
+
+.tree-node-row:hover .drag-handle {
+  color: var(--text-muted);
+}
+
+.tree-node-row.dragging {
+  opacity: 0.4;
+}
+
+.tree-node-row.drag-over {
+  background: #e0e7ff;
+  outline: 2px dashed var(--primary);
+  outline-offset: -2px;
+  border-radius: var(--radius);
+}
+
 /* Delete confirm */
 .delete-confirm {
   display: flex;
